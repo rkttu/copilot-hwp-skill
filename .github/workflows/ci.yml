@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-linux:
+    # The Copilot sandbox is Linux x86_64 (CPython 3.12 at the time of writing),
+    # so test every supported CPython in plain Debian containers.
+    name: Linux / Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    container: python:${{ matrix.python }}-slim
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "3.15"]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Script runs isolated (no site-packages, no network)
+        run: |
+          python -I -S hwp-reader/scripts/hwp_reader.py --version
+          python -I -S hwp-reader/scripts/hwp_reader.py --help > /dev/null
+      - name: Validate skill package
+        run: python tools/build_skill.py --check
+
+  test-other-os:
+    name: ${{ matrix.os }} / Python 3.12
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v
+        env:
+          PYTHONUTF8: "1"
+
+  package:
+    name: Build skill zip
+    needs: [test-linux]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Build
+        run: python tools/build_skill.py --out dist
+      - uses: actions/upload-artifact@v7
+        with:
+          name: hwp-reader-skill
+          path: dist/
+          if-no-files-found: error

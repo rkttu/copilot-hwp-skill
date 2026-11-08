@@ -1,0 +1,8 @@
+# Keep LF everywhere: SKILL.md must be UTF-8 (no BOM) with LF line endings
+* text=auto eol=lf
+
+*.hwp   binary
+*.hwpx  binary
+*.zip   binary
+*.png   binary
+*.jpg   binary

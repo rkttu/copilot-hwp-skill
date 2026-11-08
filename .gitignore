@@ -1,0 +1,17 @@
+# third-party test corpus (re-create with tools/fetch_corpus.py)
+.corpus/
+
+# build output
+dist/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# editors / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,13 @@
+copilot-hwp-skill
+Copyright 2026 rkttu@rkttu.com (남정현)
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+본 제품은 한글과컴퓨터의 한/글 문서 파일(.hwp) 공개 문서를 참고하여 개발하였습니다.
+HWPX 지원은 공개 표준 OWPML(KS X 6101) 문서 구조를 참고하여 구현하였습니다.
+
+"한글", "한컴", "HWP", "HWPX" are trademarks of Hancom Inc. This project is not
+affiliated with or endorsed by Hancom Inc. or Microsoft Corporation.
+
+No third-party source code is included. The bundled reader uses only the
+Python standard library.
